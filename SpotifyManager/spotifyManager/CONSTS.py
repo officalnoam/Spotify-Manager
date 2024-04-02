@@ -1,7 +1,10 @@
+import os
+
 from json import load
 
+
 class SpotifySessionConsts:
-    with open("secrets.json", "r") as f:
+    with open(f"{os.path.abspath(os.path.dirname(__file__))}/secrets.json", "r") as f:
         secrets = load(f)
     ID = secrets["client id"]
     SECRET = secrets["client secret"]

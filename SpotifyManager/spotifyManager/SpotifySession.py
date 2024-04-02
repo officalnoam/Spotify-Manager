@@ -1,7 +1,7 @@
 from spotipy import Spotify
 from spotipy.util import prompt_for_user_token
 
-from CONSTS import SpotifySessionConsts
+from .CONSTS import SpotifySessionConsts
 
 
 class SpotifySession:
