@@ -62,3 +62,32 @@ class SpotifySession:
         
         clearCli()
         return playlists
+    
+    @staticmethod
+    def _getSongsToSort(playlistsToSort: List[Playlist], playlistsToSortInto: List[Playlist]) -> List[Song]:
+        """
+        ::
+            Return a list of songs that need to be sorted. 
+            The songs on the list must not already appear in the playlists the songs will be sorted into- and will only appear once.
+
+        Parameters:
+            (List[Playlist]) playlistsToSort:       The playlists that need to be sorted.
+            (List[Playlist]) playlistsToSortInto:   The playlists that the songs will be sorted into.
+        
+        Returns:
+            (List[Song]):                           A list of the songs that need to be sorted.
+        """
+        sortedSongs = []
+        songsToSort = []
+
+        for playlist in playlistsToSortInto:
+            sortedSongs += playlist.songs
+
+        for playlist in playlistsToSort:
+            for song in playlist.songs:
+                if song.name not in [existingSong.name for existingSong in sortedSongs] and song.name not in [sortedSong.name for sortedSong in songsToSort]:
+                    songsToSort.append(song)
+
+        return songsToSort
+
+    
