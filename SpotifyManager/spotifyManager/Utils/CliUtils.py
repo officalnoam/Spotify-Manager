@@ -7,6 +7,7 @@ from inquirer import Checkbox, prompt, Text
 
 
 QUESTION_NAME = "TEMP"
+MULTIPLE_CHOICE_QUESTION_ADDITION = " Press [space] on each option you want to select. Press [enter] when you want to submit your selection."
 
 
 def askMultipleChoiceQuestion(message: str, options: List[str]) -> List[str]:
@@ -21,7 +22,7 @@ def askMultipleChoiceQuestion(message: str, options: List[str]) -> List[str]:
     Returns:
         (List[str]):            A list of the options the user chose.
     """
-    return prompt([Checkbox(QUESTION_NAME, message=message, choices=options)])[QUESTION_NAME]
+    return prompt([Checkbox(QUESTION_NAME, message=message + MULTIPLE_CHOICE_QUESTION_ADDITION, choices=options)])[QUESTION_NAME]
 
 
 def askSingleChoiceQuestion(message: str, options: List[str]) -> str:
