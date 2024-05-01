@@ -12,7 +12,8 @@ from .Utils.CliUtils import askMultipleChoiceQuestion, clearCli
 class SpotifySession:
     def __init__(self, username: str):
         self.consts = SpotifySessionConsts()
-        token = prompt_for_user_token(username=username, 
+        self._username = username
+        token = prompt_for_user_token(username=self._username, 
                                       scope=self.consts.SCOPE, 
                                       client_id=self.consts.ID, 
                                       client_secret=self.consts.SECRET, 
@@ -89,5 +90,35 @@ class SpotifySession:
                     songsToSort.append(song)
 
         return songsToSort
-
     
+    def _addSongToPlaylist(self, playlistId: str, songId: str) -> None:
+        """
+        ::
+            Add a song to a playlist.
+        
+        ParametersL
+            (str) playlistId:   The playlist id.
+            (str) songId:       The song id.
+        """
+        self.spotify.playlist_add_items(playlistId, [songId])
+
+    def sortSongs(self) -> None:
+        """
+        Get from the user the playlists that need to be sorted, and the ones that need to be sorted into.
+        Iterate over all songs that should be sorted- and give the user the option to sort the song into the playlists.
+        Update the song immediately to the relevant playlist- so that if internet/power is cut- minimal sorting is lost.
+        """
+
+        playlistsToSort = self._getPlaylistsFromUserSelection("Choose the playlists to sort.")
+        playlistsToSortInto = self._getPlaylistsFromUserSelection("Choose the playlists to sort into.")
+        playlistsToSortIntoNamesToIds = {playlist.name: playlist.id for playlist in playlistsToSortInto}
+
+        songsToSort = self._getSongsToSort(playlistsToSort, playlistsToSortInto)
+        for index, song in enumerate(songsToSort):
+            clearCli()
+            print(f"Song {index+1}/{len(songsToSort)}")
+            playlistsToAddSongInto = askMultipleChoiceQuestion(f"Choose which playlists to add '{song.name}' to.", playlistsToSortIntoNamesToIds.keys())
+
+            for playlist in playlistsToAddSongInto:
+                print(f"Adding {song.name} into {playlist}...")
+                self._addSongToPlaylist(playlistsToSortIntoNamesToIds[playlist], song.id)
